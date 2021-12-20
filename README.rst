@@ -49,7 +49,7 @@ Run CIJOE interactively and define the target environment:
   cijoe
 
   # Use refence definitions as a template for defining your environment
-  cat envs/refenv-zns.sh > target_env.sh
+  cat envs/refenv-fio.sh > target_env.sh
 
   # Open up your favorite editor and modify accordingly
   vim target_env.sh
