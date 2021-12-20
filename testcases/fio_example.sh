@@ -1,61 +1,48 @@
 #!/bin/bash
-
+#
+# Example of invoking fio with arguments and collecting output files
+#
+# In addition to the variables defined in the fio-module, then this script also requires the
+# definition of FIO_FILENAME, with an absolute path to a device or file to read from
+#
 CIJ_TEST_NAME=$(basename "${BASH_SOURCE[0]}")
 export CIJ_TEST_NAME
 # shellcheck source=modules/cijoe.sh
 source "$CIJ_ROOT/modules/cijoe.sh"
-
 test.enter
 
+# Define these in the environment or testplan
 : "${FIO_FILENAME?Must be set and non-empty}"
-: "${FIO_BIN:=fio}"
-: "${FIO_SIZE:=256M}"
-: "${FIO_IODEPTH:=8}"
-: "${FIO_BS:=64k}"
-: "${FIO_NUMJOBS:=4}"
-: "${FIO_IOENG_NAME:=io_uring}"
-: "${FIO_RW:=write}"
-: "${FIO_IODIRECT:=1}"
-: "${FIO_TEST_NAME:=${CIJ_TEST_NAME}}"
-: "${FIO_STATUS_INTERVAL:=20}"
-: "${FIO_USE_OFFSET_INCREMENT:=0}"
-: "${FIO_OFFSET_INCREMENT:=25%}"
-: "${FIO_USE_WRITE_RATE:=0}"
-: "${FIO_WRITE_RATE:=250m}"
 : "${FIO_OUTPUT_FILE:=/tmp/fio_example.output}"
-: "${FIO_OUTPUT_FORMAT:=json}"
-: "${FIO_RUNTIME:=50}"
 
-LOCAL_FIO_OUTPUT_FILE="${CIJ_TEST_AUX_ROOT}/fio-output-$(basename $FIO_OUTPUT_FILE)"
-
-cij.cmd "rm -rfv ${FIO_OUTPUT_FILE}"
-RET=${?}
-if [ ${RET} -ne 0 ] ; then
-  cij.err "rm -rfv ${FIO_OUTPUT_FILE}"
+# Remove the output-file if it already exists
+if cij.cmd "[[ -f ${FIO_OUTPUT_FILE} ]] && rm ${FIO_OUTPUT_FILE} || true"
+  cij.err "Failed removing ${FIO_OUTPUT_FILE}"
   test.fail
 fi
 
-cij.cmd "${FIO_BIN} -filename=${FIO_FILENAME} \
-  --size=${FIO_SIZE} \
-  --direct=${FIO_IODIRECT} \
-  --ioengine=${FIO_IOENGINE} \
-  --name=${FIO_TEST_NAME} \
-  --rw=${FIO_RW} \
-  --bs=${FIO_BS} \
-  --iodepth=${FIO_IODEPTH} \
-  --numjobs=${FIO_NUMJOBS} \
-  --status-interval=${FIO_STATUS_INTERVAL} \
-  --output-format=${FIO_OUTPUT_FORMAT} \
-  --output=${FIO_OUTPUT_FILE} \
-  --runtime=${FIO_RUNTIME}"
-RET=${?}
-if [ ${RET} -ne 0 ] ; then
-  cij.err "${FIO_BIN} failed!"
+# Setup arguments for fio
+FIO_ARGS="${FIO_ARGS} --filename=${FIO_FILENAME}"
+FIO_ARGS="${FIO_ARGS} --name=${CIJ_TEST_NAME}"
+FIO_ARGS="${FIO_ARGS} --size=256M"
+FIO_ARGS="${FIO_ARGS} --iodepth=8"
+FIO_ARGS="${FIO_ARGS} --bs=64k"
+FIO_ARGS="${FIO_ARGS} --numjobs=4"
+FIO_ARGS="${FIO_ARGS} --ioengine=io_uring"
+FIO_ARGS="${FIO_ARGS} --direct=1"
+FIO_ARGS="${FIO_ARGS} --runtime=50"
+FIO_ARGS="${FIO_ARGS} --rw=randread"
+FIO_ARGS="${FIO_ARGS} --output-format=json"
+FIO_ARGS="${FIO_ARGS} --output=${FIO_OUTPUT_FILE}"
+
+# Run fio
+if fio.run; then
+  cij.err "Check the logs, to see what went wrong"
   test.fail
 fi
 
-# Fetch the fio output file to local storage such that we can
-# extract data from it using cij_extractor
-cij.pull ${FIO_OUTPUT_FILE} "${LOCAL_FIO_OUTPUT_FILE}"
+# Fetch the fio output file to local storage such that we can extract data from it using
+# cij_extractor
+cij.pull "${FIO_OUTPUT_FILE}" "${CIJ_TEST_AUX_ROOT}/fio-output-$(basename $FIO_OUTPUT_FILE)"
 
 test.pass
