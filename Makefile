@@ -23,7 +23,7 @@ install-system:
 	pip install .
 
 .PHONY: dev
-dev: uninstall install
+dev: uninstall install selftest-view
 	@echo -n "# dev: "; date
 
 .PHONY: bump
@@ -49,3 +49,13 @@ release-upload:
 .PHONY: release
 release: clean release-build release-upload
 	@echo -n "# rel: "; date
+
+.PHONY: selftest
+selftest:
+	@rm -r selftest_results || echo "Cannot remove => That is OK"
+	./selftest.sh 1 0 selftest_results
+
+.PHONY: selftest-view
+selftest-view:
+	@rm -r selftest_results || echo "Cannot remove => That is OK"
+	./selftest.sh 1 1 selftest_results
