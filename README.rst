@@ -1,42 +1,41 @@
-cijoe-pkg-fio: cijoe extractor for fio workloads
-================================================
+ cijoe-pkg-fio: cijoe package wrapping fio workloads
+=====================================================
 
-Install CIJOE
-=============
+.. image:: https://img.shields.io/pypi/v/cijoe-pkg-fio.svg
+   :target: https://pypi.org/project/cijoe-pkg-fio
+   :alt: PyPI
 
-Install cijoe system-wide via pip
+.. image:: https://github.com/refenv/cijoe-pkg-fio/workflows/selftest/badge.svg
+   :target: https://github.com/refenv/cijoe-pkg-fio/actions
+   :alt: Build Status
+
+Install
+=======
+
+The package is distributed via PyPi, run the following to command to install:
 
 .. code-block:: bash
 
-  sudo pip install cijoe
+  pip3 install --user cijoe-pkg-fio
 
-Or install it user-level:
+To install the development preview, install:
 
 .. code-block:: bash
 
-  pip install --user cijoe
+  pip3 install --user --pre cijoe-pkg-fio
+
+See the `Cijoe` for additional documentation.
+
+If you find bugs or need help then feel free to submit an `Issue`_. If you want
+to get involved head over to the `GitHub page`_ to get the source code and
+submit a `Pull request`_ with your changes.
 
 .. note::
 
-  When doing user-level install, then include the :code:`pip` binary install
+  When doing user-level install, then include the :code:`pip3` binary install
   path in your :code:`PATH` definition. For example
   :code:`PATH="$PATH:$HOME/.local/bin"`
 
-
-Install CIJOE fio package
-=========================
-
-Install cijoe-pkg-fio system wide
-
-.. code-block:: bash
-
-  sudo make install-system
-
-Or install it user-level (follow cijoe installation)
-
-.. code-block:: bash
-
-  make install
 
 Create environment definition for CIJOE
 =======================================
@@ -64,7 +63,7 @@ Start the test-runner and view the report:
   # Directory containing results from cijoe run with `fio-output*` files
   RESULTS=/path/to/dir/with/fio-output/files/
 
-  # Run using the testplan for Zoned devices
+  # Run using the testplan exercising fio
   cij_extractor \
       --extractor fio_json_read
       --output $RESULTS
