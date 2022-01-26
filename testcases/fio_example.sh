@@ -16,7 +16,7 @@ test.enter
 : "${FIO_OUTPUT_FILE:=/tmp/fio_example.output}"
 
 # Remove the output-file if it already exists
-if cij.cmd "[[ -f ${FIO_OUTPUT_FILE} ]] && rm ${FIO_OUTPUT_FILE} || true"
+if cij.cmd "[[ -f ${FIO_OUTPUT_FILE} ]] && rm ${FIO_OUTPUT_FILE} || true"; then
   cij.err "Failed removing ${FIO_OUTPUT_FILE}"
   test.fail
 fi
