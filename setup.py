@@ -29,7 +29,7 @@ setup(
     license="Apache License 2.0",
     packages=["cijoe_extractors"],
     install_requires=[
-        "cijoe (>=0.2.2)"
+        "cijoe (>=0.2.3)"
     ],
     zip_safe=False,
     data_files=[
@@ -55,5 +55,4 @@ setup(
         "Topic :: Software Development :: Testing"
     ],
 )
-
 
