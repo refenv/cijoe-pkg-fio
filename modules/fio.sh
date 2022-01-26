@@ -35,6 +35,7 @@ fio.run() {
 
   local _args="${FIO_ARGS}"
 
-  return cij.cmd "${FIO_BIN} ${_args}"
+  cij.cmd "${FIO_BIN} ${_args}"
+  return $?
 }
 
