@@ -39,7 +39,8 @@ setup(
         ("share/cijoe/testcases", glob.glob("testcases/*")),
         ("share/cijoe/testsuites", glob.glob("testsuites/*")),
         ("share/cijoe/testplans", glob.glob("testplans/*")),
-        ("share/cijoe/hooks", glob.glob("hooks/*"))
+        ("share/cijoe/modules", glob.glob("modules/*")),
+        ("share/cijoe/hooks", glob.glob("hooks/*")),
     ],
     options={'bdist_wheel': {'universal': True}},
     classifiers=[
