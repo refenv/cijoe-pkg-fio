@@ -12,15 +12,15 @@ default: uninstall install
 
 .PHONY: install
 install:
-	pip install . --user
+	pip3 install . --user
 
 .PHONY: uninstall
 uninstall:
-	pip uninstall ${PROJECT_NAME} --yes || echo "Cannot uninstall => That is OK"
+	pip3 uninstall ${PROJECT_NAME} --yes || echo "Cannot uninstall => That is OK"
 
 .PHONY: install-system
 install-system:
-	pip install .
+	pip3 install .
 
 .PHONY: dev
 dev: uninstall install selftest-view
