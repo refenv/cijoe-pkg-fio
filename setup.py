@@ -1,58 +1,42 @@
 """
-    Definition of CIJOE fio extractor distribution package
+This is a utility package, that is, contains worklets for building the kernel and
+wrappers around kernel features such as null_blk and kmemleak, since it is not tracking
+a specific version of the kernel, then the version number tracks the main cijoe package
+instead.
 """
-import codecs
-import os
-import glob
-from setuptools import setup
-
-
-def read(*parts):
-    """Read parts to use a e.g. long_description"""
-
-    here = os.path.abspath(os.path.dirname(__file__))
-
-    # intentionally *not* adding an encoding option to open, See:
-    #   https://github.com/pypa/virtualenv/issues/201#issuecomment-3145690
-    with codecs.open(os.path.join(here, *parts), 'r') as pfp:
-        return pfp.read()
-
+from setuptools import find_namespace_packages, setup
 
 setup(
     name="cijoe-pkg-fio",
-    version="0.0.2",
-    description="CIJOE: extract data from fio dumps",
-    long_description=read('README.rst'),
-    author="Michael Bang",
-    author_email="mi.bang@samsung.com",
-    url="https://github.com/refenv/cijoe-pkg-fio",
-    license="Apache License 2.0",
-    packages=["cijoe_extractors"],
+    version="0.9.0.dev1",
+    author="Simon A. F. Lund",
+    author_email="os@safl.dk",
+    url="https://github.com/refenv/cijoe-pkg-fio/",
+    license="BSD",
     install_requires=[
-        "cijoe (>=0.2.3)"
+        "cijoe",
+        "cijoe-pkg-linux",
     ],
+    python_requires=">=3.9",
+    include_package_data=True,
+    package_data={
+        "": ["*.html", "*.config", "*.perfreq", "*.workflow"],
+    },
+    package_dir={"": "src"},
+    packages=find_namespace_packages(where="src", include=["cijoe.*"]),
     zip_safe=False,
-    data_files=[
-        ("share/cijoe/envs", glob.glob("envs/*")),
-
-        ("share/cijoe/testfiles", glob.glob("testfiles/*")),
-        ("share/cijoe/testcases", glob.glob("testcases/*")),
-        ("share/cijoe/testsuites", glob.glob("testsuites/*")),
-        ("share/cijoe/testplans", glob.glob("testplans/*")),
-        ("share/cijoe/modules", glob.glob("modules/*")),
-        ("share/cijoe/hooks", glob.glob("hooks/*")),
-    ],
-    options={'bdist_wheel': {'universal': True}},
+    options={"bdist_wheel": {"universal": True}},
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
+        "Framework :: Pytest",
         "Intended Audience :: Developers",
         "Intended Audience :: System Administrators",
-        "License :: OSI Approved :: Apache Software License",
+        "License :: OSI Approved :: BSD License",
         "Programming Language :: Python",
+        "Topic :: Software Development :: Testing",
+        "Topic :: Software Development",
         "Topic :: Text Processing",
         "Topic :: Utilities",
-        "Topic :: Software Development",
-        "Topic :: Software Development :: Testing"
     ],
 )

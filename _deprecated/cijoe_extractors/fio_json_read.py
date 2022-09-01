@@ -6,10 +6,9 @@ Extract read metrics (iops, bwps, lat) from fio json data (fio-output* files)
 import os
 from typing import List
 
-from cij.runner import TestCase
 from cij.analyser import to_base_unit
 from cij.extractors.util import dump_metrics_to_file, parse_args_load_trun
-
+from cij.runner import TestCase
 from cijoe_extractors import fio_json
 
 _MY_NAME = os.path.splitext(os.path.basename(__file__))[0]
@@ -40,13 +39,15 @@ def extract_metrics(tcase: TestCase) -> List[dict]:
             name = "_".join(name.split("_")[:-1])
             ctx["tsuite_name"] = name
 
-            metrics.append({
-                "ctx": ctx,
-                "iops": to_base_unit(job["read"]["iops_mean"], ""),
-                "bwps": to_base_unit(job["read"]["bw_mean"], "KiB"),
-                "lat": to_base_unit(job["read"]["lat_ns"]["mean"], "nsec"),
-                "stddev": to_base_unit(job["read"]["lat_ns"]["stddev"], ""),
-            })
+            metrics.append(
+                {
+                    "ctx": ctx,
+                    "iops": to_base_unit(job["read"]["iops_mean"], ""),
+                    "bwps": to_base_unit(job["read"]["bw_mean"], "KiB"),
+                    "lat": to_base_unit(job["read"]["lat_ns"]["mean"], "nsec"),
+                    "stddev": to_base_unit(job["read"]["lat_ns"]["stddev"], ""),
+                }
+            )
 
     if metrics:  # Only dump non-empty metrics
         dump_metrics_to_file(metrics, tcase.aux_root)
@@ -55,7 +56,7 @@ def extract_metrics(tcase: TestCase) -> List[dict]:
 
 
 if __name__ == "__main__":
-    """ Extract metrics if invoked directly """
+    """Extract metrics if invoked directly"""
     trun = parse_args_load_trun("fio_json_read")
     for tplan in trun.testplans:
         for tsuite in tplan.testsuites:
