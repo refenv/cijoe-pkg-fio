@@ -14,7 +14,7 @@ setup(
     url="https://github.com/refenv/cijoe-pkg-fio/",
     license="BSD",
     install_requires=[
-        "cijoe",
+        "cijoe>=0.9.1",
         "cijoe-pkg-linux",
     ],
     python_requires=">=3.9",
