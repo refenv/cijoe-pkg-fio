@@ -119,7 +119,7 @@ def setup_ioengine(param, env, engine_name, cijoe, device, xnvme_opts, spdk_opts
         param["ioengine"] = f"external:{ engine['path'] }"
     elif engine["type"] == "external_preload":
         param["ioengine"] = engine_name
-        env["LD_PRELOAD"] = {engine["path"]}
+        env["LD_PRELOAD"] = engine["path"]
     else:
         log.error(f"Configuration has invalid engine.type({ engine['type'] })")
         return False
@@ -144,14 +144,35 @@ def setup_ioengine(param, env, engine_name, cijoe, device, xnvme_opts, spdk_opts
             ]
         )
     elif engine_name == "spdk_bdev":
-        # TODO: need to generate a spdk.bdev.conf for the device and be-options
-        # generate spdk-conf
-        # spdk_conf = []
-        # spdk_conf.append("[Nvme]")
-        # spdk_conf.append("  TransportID \"trtype:PCIe traddr:{device['uri']\" Nvme0")
+        spdk_conf = {
+            "subsystems": [
+                {
+                    "subsystem": "bdev",
+                    "config": [
+                        {
+                            "params": spdk_opts["params"],
+                            "method": f"bdev_{spdk_opts['bdev']}_create",
+                        }
+                    ],
+                }
+            ]
+        }
+        conf_filestem = "_".join(
+            [
+                "spdk",
+                "bdev",
+                spdk_opts["bdev"],
+                spdk_opts["params"].get("io_mechanism", "foo"),
+            ]
+        )
+        spdk_conf_path = Path(f"/tmp/{conf_filestem}.conf")
+        with spdk_conf_path.open("w") as scpath:
+            json.dump(spdk_conf, scpath)
 
-        param["spdk_conf"] = "/tmp/spdk.bdev.conf"
-        param["filename"] = "Nvme0n1"
+        cijoe.put(spdk_conf_path, spdk_conf_path)
+
+        param["spdk_conf"] = f"{spdk_conf_path}"
+        param["filename"] = f"{spdk_opts['params']['name']}"
     else:
         param["filename"] = device["uri"]
 
@@ -178,7 +199,16 @@ def fio(cijoe, parameters="", env={}):
     return cijoe.run(f"{cijoe.config.options['fio']['bin']} {parameters}", env=env)
 
 
-def fio_fancy(cijoe, output_fpath, jobname, engine_name, device, xnvme_opts):
+def fio_fancy(
+    cijoe,
+    output_fpath,
+    jobname,
+    engine_name,
+    device,
+    xnvme_opts={},
+    spdk_opts={},
+    aux={},
+):
     """
     Run fio using helpers for parameter setup for io-engines, store fio output with
     json, collect the output as artifact
@@ -188,8 +218,10 @@ def fio_fancy(cijoe, output_fpath, jobname, engine_name, device, xnvme_opts):
 
     param, env = {}, {}  # Setup parameters and env.
     setup_job(param, env, jobname)
-    setup_ioengine(param, env, engine_name, cijoe, device, xnvme_opts, {})
+    setup_ioengine(param, env, engine_name, cijoe, device, xnvme_opts, spdk_opts)
     setup_output(param, env, output_fpath)
+
+    param.update(aux)
 
     environment = env
     parameters = " ".join([f'--{key}="{val}"' for key, val in param.items()])
