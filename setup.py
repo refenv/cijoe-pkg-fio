@@ -8,7 +8,7 @@ from setuptools import find_namespace_packages, setup
 
 setup(
     name="cijoe-pkg-fio",
-    version="0.9.2",
+    version="0.9.3",
     author="Simon A. F. Lund",
     author_email="os@safl.dk",
     url="https://github.com/refenv/cijoe-pkg-fio/",
