@@ -126,10 +126,16 @@ def setup_ioengine(param, env, engine_name, cijoe, device, xnvme_opts, spdk_opts
 
     # setup 'xnvme' specific options
     if engine_name == "xnvme":
-        param["xnvme_async"] = xnvme_opts["async"]
-        param["xnvme_sync"] = xnvme_opts["sync"]
-        param["xnvme_admin"] = xnvme_opts["admin"]
-        param["xnvme_dev_nsid"] = device["nsid"]
+        if "async" in xnvme_opts:
+            param["xnvme_async"] = xnvme_opts["async"]
+        if "sync" in xnvme_opts:
+            param["xnvme_sync"] = xnvme_opts["sync"]
+        if "admin" in xnvme_opts:
+            param["xnvme_admin"] = xnvme_opts["admin"]
+        if "nsid" in xnvme_opts:
+            param["xnvme_dev_nsid"] = device["nsid"]
+        if "mem" in xnvme_opts:
+            param["xnvme_mem"] = xnvme_opts["mem"]
 
         if any(label in ["pcie", "fabrics"] for label in device["labels"]):
             param["filename"] = device["uri"].replace(":", r"\:")
