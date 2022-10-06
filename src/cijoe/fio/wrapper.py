@@ -132,7 +132,7 @@ def setup_ioengine(param, env, engine_name, cijoe, device, xnvme_opts, spdk_opts
             param["xnvme_sync"] = xnvme_opts["sync"]
         if "admin" in xnvme_opts:
             param["xnvme_admin"] = xnvme_opts["admin"]
-        if "nsid" in xnvme_opts:
+        if "nsid" in device:
             param["xnvme_dev_nsid"] = device["nsid"]
         if "mem" in xnvme_opts:
             param["xnvme_mem"] = xnvme_opts["mem"]
