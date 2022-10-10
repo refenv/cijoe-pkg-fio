@@ -126,6 +126,8 @@ def setup_ioengine(param, env, engine_name, cijoe, device, xnvme_opts, spdk_opts
 
     # setup 'xnvme' specific options
     if engine_name == "xnvme":
+        if "be" in xnvme_opts:
+            param["xnvme_be"] = xnvme_opts["be"]
         if "async" in xnvme_opts:
             param["xnvme_async"] = xnvme_opts["async"]
         if "sync" in xnvme_opts:
