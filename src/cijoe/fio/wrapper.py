@@ -216,6 +216,7 @@ def fio_fancy(
     xnvme_opts={},
     spdk_opts={},
     aux={},
+    env={},
 ):
     """
     Run fio using helpers for parameter setup for io-engines, store fio output with
@@ -224,21 +225,20 @@ def fio_fancy(
     @returns err, state
     """
 
-    param, env = {}, {}  # Setup parameters and env.
-    setup_job(param, env, jobname)
-    setup_ioengine(param, env, engine_name, cijoe, device, xnvme_opts, spdk_opts)
-    setup_output(param, env, output_fpath)
+    param, job_env = {}, {}  # Setup parameters and env.
+    setup_job(param, job_env, jobname)
+    setup_ioengine(param, job_env, engine_name, cijoe, device, xnvme_opts, spdk_opts)
+    setup_output(param, job_env, output_fpath)
 
     param.update(aux)
 
-    environment = env
     parameters = " ".join([f'--{key}="{val}"' for key, val in param.items()])
 
     err, _ = cijoe.run(f"rm {output_fpath}")  # Avoid getting old data...
     if err:
         log.info(f"failed removing '{output_fpath}'")
 
-    err, state = fio(cijoe, parameters, env=environment)
+    err, state = fio(cijoe, parameters, env=job_env | env)
 
     cijoe.run(f"cat {output_fpath}")  # Get the output in runlog
 
