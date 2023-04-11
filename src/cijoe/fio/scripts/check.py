@@ -12,7 +12,7 @@ Retargetable: True
 from cijoe.fio.wrapper import fio
 
 
-def worklet_entry(args, cijoe, step):
+def main(args, cijoe, step):
     """Check version of fio"""
 
     err, _ = fio(cijoe, "--help")

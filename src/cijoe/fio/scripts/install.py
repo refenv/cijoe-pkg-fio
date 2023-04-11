@@ -11,7 +11,7 @@ Retargetable: True
 from pathlib import Path
 
 
-def worklet_entry(args, cijoe, step):
+def main(args, cijoe, step):
     """Install fio"""
 
     err, _ = cijoe.run(
